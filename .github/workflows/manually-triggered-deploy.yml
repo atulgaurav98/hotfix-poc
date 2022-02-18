@@ -1,0 +1,42 @@
+name: Hotfix deploy
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Provide the recent published ecr version'
+        required: true
+      deploy-environment:
+        type: choice
+        description: 'Environment in which the version has to be deployed'
+        required: true
+        options:
+          - uat
+          - prod
+jobs:
+#
+# Deploy the build version on ebs
+#
+  deploy-to-ebs:
+    name: "Deploy EB Environment updates and wait for the Environment to become healthy"
+    runs-on: [self-hosted,X64,Linux,APPE]
+    needs: build-docker-image-and-publish-to-ecr
+    steps:
+
+      - name: Clone orderhub-ci repository
+        run: |
+          echo "Clone orderhub-ci repo"
+
+    - name: Deploying to EBS
+      env:
+        PROJECT_VERSION: ${{ github.event.inputs.version }}
+        PROJECT_NAME: ecommerce-cart-service
+        ENV: ${{ github.event.inputs.deploy-environment }}
+      run: |
+        export ENV=`if [[ "$GIT_BRANCH" == "master" ]]; then echo "dev"; elif [[ "$GIT_BRANCH" == "prod" ]]; then echo "prod"; elif [[ "$GIT_BRANCH" == "uat" ]]; then echo "uat"; else echo "dev"; fi`
+        export ENVIRONMENT_NAME=`if [[ "$ENV" == "uat" ]]; then echo "$PROJECT_NAME-Uat"; elif [[ "$ENV" == "prod" ]]; then echo "$PROJECT_NAME-Prod-Blue"; fi`
+        echo "PROJECT_VERSION :" $PROJECT_VERSION
+        echo "ENV :" $ENV
+        echo "ENVIRONMENT_NAME :" $ENVIRONMENT_NAME
+        echo "Deploying EB Environment updates"
+        echo "run update environment script"
+        echo "Deployment to EBS done"
