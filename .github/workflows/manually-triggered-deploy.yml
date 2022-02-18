@@ -31,8 +31,9 @@ jobs:
           PROJECT_VERSION: ${{ github.event.inputs.version }}
           PROJECT_NAME: ecommerce-cart-service
           ENV: ${{ github.event.inputs.deploy-environment }}
+          ENVIRONMENT_NAME: `if [[ "$ENV" == "uat" ]]; then echo "$PROJECT_NAME-Uat"; elif [[ "$ENV" == "prod" ]]; then echo "$PROJECT_NAME-Prod-Blue"; fi`
+
         run: |
-          export ENV=`if [[ "$GIT_BRANCH" == "master" ]]; then echo "dev"; elif [[ "$GIT_BRANCH" == "prod" ]]; then echo "prod"; elif [[ "$GIT_BRANCH" == "uat" ]]; then echo "uat"; else echo "dev"; fi`
           export ENVIRONMENT_NAME=`if [[ "$ENV" == "uat" ]]; then echo "$PROJECT_NAME-Uat"; elif [[ "$ENV" == "prod" ]]; then echo "$PROJECT_NAME-Prod-Blue"; fi`
           echo "PROJECT_VERSION :" $PROJECT_VERSION
           echo "ENV :" $ENV
