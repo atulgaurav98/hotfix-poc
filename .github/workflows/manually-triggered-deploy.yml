@@ -13,13 +13,13 @@ on:
           - uat
           - prod
 jobs:
+
 #
 # Deploy the build version on ebs
 #
   deploy-to-ebs:
     name: "Deploy EB Environment updates and wait for the Environment to become healthy"
-    runs-on: [self-hosted,X64,Linux,APPE]
-    needs: build-docker-image-and-publish-to-ecr
+    runs-on: ubuntu-latest
     steps:
 
       - name: Clone orderhub-ci repository
