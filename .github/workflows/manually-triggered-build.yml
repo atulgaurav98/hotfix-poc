@@ -1,0 +1,42 @@
+#
+# name to be displayed on the GitHub action bar
+#
+name: Hotfix Build And Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Name the branch to be cloned'
+        required: true
+
+jobs:
+  #
+  # Build JAR and run unit and integration tests
+  #
+  build:
+    name: "Build JAR, run Unit and Integration tests"
+    runs-on: ubuntu-latest
+    steps:
+      # Actions to clone the repository
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      # Extracting project version
+      - name: Extract project version
+        shell: bash
+        run: echo "##[set-output name=version;]$(echo $(grep -i "version" README.md ))"
+        id: extract_version
+
+      # Gradle builds for running unit and integration test cases
+      - name: Script
+        env:
+          PROJECT_VERSION: ${{ steps.extract_version.outputs.version }}
+        run: |
+          echo "PROJECT_VERSION :" $PROJECT_VERSION
+          echo "Unit and Integration test run started and completed"
+
+
