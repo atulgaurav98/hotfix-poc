@@ -1,0 +1,54 @@
+#
+# name to be displayed on the GitHub action bar (trigger build)
+#
+name: Hotfix Docker Image Build and Publish
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Name the branch to be cloned'
+        required: true
+
+jobs:
+  #
+  # Build and Publish docker image to ecr
+  #
+  build-docker-image-and-publish-to-ecr:
+    name: "Publish Docker image to ECR and create EB Application Version"
+    runs-on: ubuntu-latest
+    steps:
+
+      # Actions to clone the repository
+      - name: Clone the repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      # Gradle builds for building eCommerce cart service
+      - name: Build JAR
+        env:
+          PROJECT_VERSION: ${{ steps.extract_version.outputs.version }}
+        run: |
+          echo "Building JAR and testing started and completed"
+
+      - name: Clone orderhub-ci repository
+        run: |
+          echo "Clone orderhub-ci repo"
+
+      # Extracting project version
+      - name: Extract project version
+        shell: bash
+        run: echo "##[set-output name=version;]$(echo $(grep -i "version" README.md ))"
+        id: extract_version
+
+      # Gradle build and publish script
+      - name: Script
+        env:
+          PROJECT_VERSION: ${{ steps.extract_version.outputs.version }}
+        run: |
+          echo "Publishing Docker image to ECR and creating an EB Application Version using project version"
+          echo "PROJECT_VERSION :" $PROJECT_VERSION
+          echo "run docker publish script file"
+          echo "Create application version for ElasticBeanStalk"
+          echo "run create application version script file"
+
