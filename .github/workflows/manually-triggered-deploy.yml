@@ -26,17 +26,17 @@ jobs:
         run: |
           echo "Clone orderhub-ci repo"
 
-    - name: Deploying to EBS
-      env:
-        PROJECT_VERSION: ${{ github.event.inputs.version }}
-        PROJECT_NAME: ecommerce-cart-service
-        ENV: ${{ github.event.inputs.deploy-environment }}
-      run: |
-        export ENV=`if [[ "$GIT_BRANCH" == "master" ]]; then echo "dev"; elif [[ "$GIT_BRANCH" == "prod" ]]; then echo "prod"; elif [[ "$GIT_BRANCH" == "uat" ]]; then echo "uat"; else echo "dev"; fi`
-        export ENVIRONMENT_NAME=`if [[ "$ENV" == "uat" ]]; then echo "$PROJECT_NAME-Uat"; elif [[ "$ENV" == "prod" ]]; then echo "$PROJECT_NAME-Prod-Blue"; fi`
-        echo "PROJECT_VERSION :" $PROJECT_VERSION
-        echo "ENV :" $ENV
-        echo "ENVIRONMENT_NAME :" $ENVIRONMENT_NAME
-        echo "Deploying EB Environment updates"
-        echo "run update environment script"
-        echo "Deployment to EBS done"
+      - name: Deploying to EBS
+        env:
+          PROJECT_VERSION: ${{ github.event.inputs.version }}
+          PROJECT_NAME: ecommerce-cart-service
+          ENV: ${{ github.event.inputs.deploy-environment }}
+        run: |
+          export ENV=`if [[ "$GIT_BRANCH" == "master" ]]; then echo "dev"; elif [[ "$GIT_BRANCH" == "prod" ]]; then echo "prod"; elif [[ "$GIT_BRANCH" == "uat" ]]; then echo "uat"; else echo "dev"; fi`
+          export ENVIRONMENT_NAME=`if [[ "$ENV" == "uat" ]]; then echo "$PROJECT_NAME-Uat"; elif [[ "$ENV" == "prod" ]]; then echo "$PROJECT_NAME-Prod-Blue"; fi`
+          echo "PROJECT_VERSION :" $PROJECT_VERSION
+          echo "ENV :" $ENV
+          echo "ENVIRONMENT_NAME :" $ENVIRONMENT_NAME
+          echo "Deploying EB Environment updates"
+          echo "run update environment script"
+          echo "Deployment to EBS done"
